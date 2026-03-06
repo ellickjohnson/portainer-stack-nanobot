@@ -17,8 +17,6 @@ services:
       - NANOBOT_PROVIDER=${NANOBOT_PROVIDER:-zhipu}
       - NANOBOT_MODEL=${NANOBOT_MODEL:-glm-5}
       - TZ=UTC
-    ports:
-      - "18790:18790"
     networks:
       - proxy-net
     entrypoint:
