@@ -18,7 +18,7 @@ services:
       - NANOBOT_MODEL=${NANOBOT_MODEL:-glm-5}
       - TZ=UTC
     ports:
-      - "8765:8765"
+      - "18790:18790"
     networks:
       - proxy-net
     entrypoint:
