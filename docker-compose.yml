@@ -19,6 +19,8 @@ services:
       - TZ=UTC
     ports:
       - "8765:8765"
+    networks:
+      - proxy-net
     entrypoint:
       - /bin/sh
       - -c
@@ -61,3 +63,7 @@ services:
 volumes:
   nanobot_data:
     driver: local
+
+networks:
+  proxy-net:
+    external: true
