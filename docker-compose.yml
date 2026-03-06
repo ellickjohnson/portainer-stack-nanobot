@@ -8,10 +8,61 @@ services:
     volumes:
       - nanobot_data:/root/.nanobot
     environment:
+      # LLM Provider API Keys (set in Portainer stack env vars)
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - GOOGLE_AI_KEY=${GOOGLE_AI_KEY:-}
+      - XAI_API_KEY=${XAI_API_KEY:-}
+      # Optional: Pin to specific provider/model
+      - NANOBOT_PROVIDER=${NANOBOT_PROVIDER:-openrouter}
+      - NANOBOT_MODEL=${NANOBOT_MODEL:-anthropic/claude-sonnet-4}
       - TZ=UTC
     ports:
       - "8765:8765"
-    command: ["gateway"]
+    # Generate config.json from env vars on startup
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        # Create config directory
+        mkdir -p /root/.nanobot
+
+        # Generate config.json from environment variables
+        cat > /root/.nanobot/config.json << 'CONFIGEOF'
+        {
+          "providers": {
+            "openrouter": {
+              "apiKey": "$$OPENROUTER_API_KEY"
+            },
+            "openai": {
+              "apiKey": "$$OPENAI_API_KEY"
+            },
+            "anthropic": {
+              "apiKey": "$$ANTHROPIC_API_KEY"
+            },
+            "deepseek": {
+              "apiKey": "$$DEEPSEEK_API_KEY"
+            },
+            "google": {
+              "apiKey": "$$GOOGLE_AI_KEY"
+            },
+            "xai": {
+              "apiKey": "$$XAI_API_KEY"
+            }
+          },
+          "agents": {
+            "defaults": {
+              "model": "$$NANOBOT_MODEL",
+              "provider": "$$NANOBOT_PROVIDER"
+            }
+          }
+        }
+        CONFIGEOF
+
+        # Start nanobot gateway
+        exec nanobot gateway
     stdin_open: true
     tty: true
 
