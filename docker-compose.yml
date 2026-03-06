@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  nanobot:
+    image: smanx/nanobot:latest
+    container_name: nanobot
+    restart: unless-stopped
+    volumes:
+      - nanobot_data:/root/.nanobot
+    environment:
+      - TZ=UTC
+    ports:
+      - "8765:8765"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8765/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  nanobot_data:
+    driver: local
