@@ -8,26 +8,23 @@ services:
     volumes:
       - nanobot_data:/root/.nanobot
     environment:
-      # LLM Provider API Keys (set in Portainer stack env vars)
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
       - ZAI_API_KEY=${ZAI_API_KEY:-}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
       - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
-      # Provider/model selection
       - NANOBOT_PROVIDER=${NANOBOT_PROVIDER:-zhipu}
       - NANOBOT_MODEL=${NANOBOT_MODEL:-glm-5}
       - TZ=UTC
     ports:
       - "8765:8765"
-    # Generate config.json from env vars on startup
     entrypoint:
       - /bin/sh
       - -c
       - |
         mkdir -p /root/.nanobot
-        cat > /root/.nanobot/config.json << 'CONFIGEOF'
+        cat > /root/.nanobot/config.json << CONFIGEOF
         {
           "providers": {
             "openrouter": {
